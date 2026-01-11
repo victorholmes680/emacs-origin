@@ -113,3 +113,12 @@
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
             (local-set-key (kbd "C-j") #'eval-print-last-sexp)))
+
+
+(with-eval-after-load 'rust-mode
+  (define-key rust-mode-map (kbd "C-c C-f") #'rust-format-buffer))
+
+
+(use-package expand-region
+  :ensure t
+  :bind ("C-=" . er/expand-region))
