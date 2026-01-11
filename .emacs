@@ -118,6 +118,7 @@
 (with-eval-after-load 'rust-mode
   (define-key rust-mode-map (kbd "C-c C-f") #'rust-format-buffer))
 
+(load-theme 'modus-vivendi t)
 
 (use-package expand-region
   :ensure t
