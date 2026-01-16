@@ -1,8 +1,5 @@
  ;;; -*- lexical-binding: t -*-
 
-(setq custom-file "~/.emacs.custom.el") ;; set customized variables
-(load-file custom-file)
-
 ;; Package management
 (require 'package)
 (setq package-archives
@@ -118,8 +115,22 @@
 (with-eval-after-load 'rust-mode
   (define-key rust-mode-map (kbd "C-c C-f") #'rust-format-buffer))
 
-(load-theme 'modus-vivendi t)
+;;(load-theme 'modus-vivendi t)
+(load-theme 'gruber-darker t)
 
 (use-package expand-region
   :ensure t
   :bind ("C-=" . er/expand-region))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(expand-region rust-mode multiple-cursors magit gruber-darker-theme corfu)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
