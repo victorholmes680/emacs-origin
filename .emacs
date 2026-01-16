@@ -65,6 +65,11 @@
 ;; Enable syntax highting everywhere
 (global-font-lock-mode t)
 
+;; 备份和自动保存文件设置
+(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
+(setq create-lockfiles nil)  ; 禁用 .#file 符号链接锁文件
+
 ;; function folding
 (add-hook 'prog-mode-hook #'hs-minor-mode)
 
@@ -103,8 +108,11 @@
   :ensure t
   :bind (("C-c n" . mc/mark-next-like-this)
          ("C-c p" . mc/mark-previous-like-this)
-         ("C-c a" . mc/mark-all-like-this)
-         ("C-c l" . mc/edit-lines)))
+         ("C-c a" . mc/mark-all-like-this)))
+
+(use-package iedit
+  :bind ("C-;" . iedit-mode))
+
 
 ;; Restore classic C-j behavior in Emacs Lisp buffers
 (add-hook 'emacs-lisp-mode-hook
