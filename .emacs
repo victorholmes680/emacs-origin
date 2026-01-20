@@ -21,6 +21,14 @@
   :ensure t
   :mode "\\.rs\\'")
 
+(use-package markdown-mode
+  :ensure t
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init
+  (setq markdown-command "multimarkdown"))
+
 (add-to-list 'auto-mode-alist '("\\.[hc]\\(pp\\)?\\'" . simpc-mode))
 (add-to-list 'auto-mode-alist '("\\.js\\'"  . js-mode))
 (add-to-list 'auto-mode-alist '("\\.mjs\\'" . js-mode))
@@ -106,10 +114,10 @@
 
 (use-package multiple-cursors
   :ensure t
-  :bind (("C-c n" . mc/mark-next-like-this)
-         ("C-c p" . mc/mark-previous-like-this)
-         ("C-c a" . mc/mark-all-like-this)))
-
+  :bind (("C-n" . mc/mark-next-like-this)
+         ("C-p " . mc/mark-previous-like-this)
+         ("C-c C-a" . mc/mark-all-like-this)))
+(global-set-key (kbd "C-c a") 'align-regexp)
 (use-package iedit
   :bind ("C-;" . iedit-mode))
 
