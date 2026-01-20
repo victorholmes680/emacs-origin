@@ -90,6 +90,12 @@
 (with-eval-after-load 'magit
   (global-set-key (kbd "C-x g") #'magit-status))
 
+(use-package company
+  :ensure t
+  :init (global-company-mode)
+  :config
+  (setq company-idle-delay 0.1
+        company-minimum-prefix-length 1))
 
 (use-package corfu
   :ensure t
