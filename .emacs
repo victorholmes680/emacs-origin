@@ -87,6 +87,7 @@
 (global-set-key (kbd "C-c p f") #'project-find-file)
 (global-set-key (kbd "C-c p s") #'project-shell)
 (global-set-key (kbd "C-c d") 'duplicate-line)
+(global-set-key (kbd "C-x c") 'compile)
 (with-eval-after-load 'magit
   (global-set-key (kbd "C-x g") #'magit-status))
 
