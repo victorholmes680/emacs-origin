@@ -84,8 +84,8 @@
 (require 'project)
 
 ;; Keybindings
-(global-set-key (kbd "C-c p f") #'project-find-file)
-(global-set-key (kbd "C-c p s") #'project-shell)
+;;(global-set-key (kbd "C-c p f") #'project-find-file)
+;;(global-set-key (kbd "C-c p s") #'project-shell)
 (global-set-key (kbd "C-c d") 'duplicate-line)
 (global-set-key (kbd "C-x c") 'compile)
 (with-eval-after-load 'magit
@@ -124,7 +124,7 @@
   :bind (("C-n" . mc/mark-next-like-this)
          ("C-p " . mc/mark-previous-like-this)
          ("C-c C-a" . mc/mark-all-like-this)))
-(global-set-key (kbd "C-c a") 'align-regexp)
+(global-set-key (kbd "C-c |") 'align-regexp)
 (use-package iedit
   :bind ("C-;" . iedit-mode))
 
@@ -157,3 +157,17 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+;; C-c c Capture
+;; C-c C-s schedule
+;; C-c a Agenda
+;; C-c C-e export
+;; C-c C-c make sure
+;; C-c ' edit the code block
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "DOING(i)" "BLOCKED(b)" "|" "DONE(d)" "CANCELLED(c)")))
+(setq org-agenda-files '("~/org"))
+(setq org-capture-templates
+      '(("t" "Todo" entry
+         (file "~/org/inbox.org")
+         "* TODO %?\n  %U")))
