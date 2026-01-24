@@ -187,3 +187,5 @@
 
 (global-set-key (kbd "C-x 3") 'my-split-window-right-and-move)
 (global-set-key (kbd "C-x 2") 'my-split-window-below-and-move)
+
+(setq compile-command "")
