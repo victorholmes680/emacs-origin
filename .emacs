@@ -171,3 +171,19 @@
       '(("t" "Todo" entry
          (file "~/org/inbox.org")
          "* TODO %?\n  %U")))
+
+
+(defun my-split-window-right-and-move ()
+    "Split window horizontally and move focus to new window."
+    (interactive)
+    (split-window-right)
+    (other-window 1))
+
+(defun my-split-window-below-and-move ()
+  "Split window vertically and move focus to new window."
+  (interactive)
+  (split-window-below)
+  (other-window 1))
+
+(global-set-key (kbd "C-x 3") 'my-split-window-right-and-move)
+(global-set-key (kbd "C-x 2") 'my-split-window-below-and-move)
