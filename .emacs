@@ -189,3 +189,5 @@
 (global-set-key (kbd "C-x 2") 'my-split-window-below-and-move)
 
 (setq compile-command "")
+
+(global-set-key (kbd "C-x C-b") 'ibuffer)
