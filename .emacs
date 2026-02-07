@@ -37,7 +37,7 @@
 ;; Language
 (use-package eglot
   :ensure t
-  :hook ((rust-mode c-mode c++-mode js-mode) . eglot-ensure)
+  :hook ((rust-mode c-mode c++-mode js-mode simpc-mode) . eglot-ensure)
   :config
   (setq eglot-autoshutdown t)
   (setq eglot-sync-connect nil)
@@ -49,6 +49,9 @@
                '(rust-mode . ("rust-analyzer")))
   (add-to-list 'eglot-server-programs
 	       '(js-mode . ("typescript-language-server" "--stdio")))
+  (add-to-list 'eglot-server-programs '(c-mode . ("clangd")))
+  (add-to-list 'eglot-server-programs '(c++-mode . ("clangd")))
+  (add-to-list 'eglot-server-programs '(simpc-mode . ("clangd")))
   )
 
 
@@ -191,3 +194,21 @@
 (setq compile-command "")
 
 (global-set-key (kbd "C-x C-b") 'ibuffer)
+
+(defun syscpy ()
+  (interactive)
+  (when (use-region-p)
+    (shell-command-on-region
+     (region-beginning)
+     (region-end)
+     "pbcopy")
+    (deactivate-mark)))
+
+(defun copy-current-line ()
+  (interactive)
+  (kill-new
+   (buffer-substring
+    (line-beginning-position)
+    (line-beginning-position 2)))
+  (message "Line copied"))
+(global-set-key (kbd "C-c l") #'copy-current-line)
