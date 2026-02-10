@@ -1,4 +1,4 @@
- ;;; -*- lexical-binding: t -*-
+;;; -*- lexical-binding: t -*-
 
 ;; Package management
 (require 'package)
@@ -34,7 +34,7 @@
 (add-to-list 'auto-mode-alist '("\\.mjs\\'" . js-mode))
 (add-to-list 'auto-mode-alist '("\\.cjs\\'" . js-mode))
 
-;; Language
+;; Language Server Protocol
 (use-package eglot
   :ensure t
   :hook ((rust-mode c-mode c++-mode js-mode simpc-mode) . eglot-ensure)
@@ -124,8 +124,8 @@
 
 (use-package multiple-cursors
   :ensure t
-  :bind (("C-n" . mc/mark-next-like-this)
-         ("C-p " . mc/mark-previous-like-this)
+  :bind (("M-n" . mc/mark-next-like-this)
+         ("M-p" . mc/mark-previous-like-this)
          ("C-c C-a" . mc/mark-all-like-this)))
 (global-set-key (kbd "C-c |") 'align-regexp)
 (use-package iedit
@@ -149,14 +149,14 @@
   :bind ("C-=" . er/expand-region))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; If you edit it by hand, you could mess up it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(expand-region rust-mode multiple-cursors magit gruber-darker-theme corfu)))
+   '(treemacs-projectile treemacs expand-region rust-mode multiple-cursors magit gruber-darker-theme corfu)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; If you edit it by hand, you could mess up it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
@@ -177,10 +177,10 @@
 
 
 (defun my-split-window-right-and-move ()
-    "Split window horizontally and move focus to new window."
-    (interactive)
-    (split-window-right)
-    (other-window 1))
+  "Split window horizontally and move focus to new window."
+  (interactive)
+  (split-window-right)
+  (other-window 1))
 
 (defun my-split-window-below-and-move ()
   "Split window vertically and move focus to new window."
@@ -212,3 +212,16 @@
     (line-beginning-position 2)))
   (message "Line copied"))
 (global-set-key (kbd "C-c l") #'copy-current-line)
+
+;; Avy navigation
+(use-package avy
+  :ensure t
+  :bind (("M-s" . avy-goto-char-timer)))
+(setq avy-all-windows t)     ;; 跨窗口
+(setq avy-background t)      ;; 不遮挡文本
+(setq avy-timeout-seconds 0.3) ;; 输入停顿判定（可调）
+
+;; Treemacs
+(use-package treemacs
+  :ensure t
+  :bind (("C-x t t" . treemacs)))
