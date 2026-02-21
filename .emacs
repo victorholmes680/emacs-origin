@@ -225,3 +225,4 @@
 (use-package treemacs
   :ensure t
   :bind (("C-x t t" . treemacs)))
+(setq compilation-scroll-output t)
