@@ -226,3 +226,8 @@
   :ensure t
   :bind (("C-x t t" . treemacs)))
 (setq compilation-scroll-output t)
+(use-package move-text
+  :ensure t
+  :bind
+  (("M-<up>"  . move-text-up)
+   ("M-<down>" . move-text-down)))
