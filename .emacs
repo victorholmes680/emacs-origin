@@ -37,7 +37,7 @@
 ;; Language Server Protocol
 (use-package eglot
   :ensure t
-  :hook ((rust-mode c-mode c++-mode js-mode simpc-mode) . eglot-ensure)
+  :hook ((rust-mode c-mode c++-mode js-mode) . eglot-ensure)
   :config
   (setq eglot-autoshutdown t)
   (setq eglot-sync-connect nil)
