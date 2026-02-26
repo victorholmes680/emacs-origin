@@ -51,7 +51,7 @@
 	       '(js-mode . ("typescript-language-server" "--stdio")))
   (add-to-list 'eglot-server-programs '(c-mode . ("clangd")))
   (add-to-list 'eglot-server-programs '(c++-mode . ("clangd")))
-  (add-to-list 'eglot-server-programs '(simpc-mode . ("clangd")))
+;;  (add-to-list 'eglot-server-programs '(simpc-mode . ("clangd")))
   )
 
 
