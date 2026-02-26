@@ -232,3 +232,8 @@
   (("M-<up>"  . move-text-up)
    ("M-<down>" . move-text-down)))
 (global-set-key (kbd "C-c m l") #'mc/edit-lines)
+
+
+(use-package magit
+  :ensure t)
+(global-set-key (kbd "C-x g") #'magit-status)
