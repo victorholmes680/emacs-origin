@@ -217,7 +217,7 @@
 ;; Avy navigation
 (use-package avy
   :ensure t
-  :bind (("M-s" . avy-goto-char-timer)))
+  :bind (("M-j" . avy-goto-char-timer)))
 (setq avy-all-windows t)     ;; 跨窗口
 (setq avy-background t)      ;; 不遮挡文本
 (setq avy-timeout-seconds 0.3) ;; 输入停顿判定（可调）
