@@ -244,3 +244,11 @@
   :config
   (setq treemacs-width 35)
   (treemacs-follow-mode t))
+
+(defun wl () ;; windows lock (toggle window)
+  (interactive)
+  (set-window-dedicated-p
+   (selected-window)
+   (not (window-dedicated-p (selected-window))))
+  (message "Window dedicated: %s"
+           (window-dedicated-p (selected-window))))
