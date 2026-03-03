@@ -257,3 +257,9 @@
 (use-packge ace-window
 	    :ensure t
 	    :bind("M-o" . ace-window))
+
+
+(global-set-key (kbd "C-M-<left>")  'shrink-window-horizontally)
+(global-set-key (kbd "C-M-<right>") 'enlarge-window-horizontally)
+(global-set-key (kbd "C-M-<down>")  'shrink-window)
+(global-set-key (kbd "C-M-<up>")    'enlarge-window)
