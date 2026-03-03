@@ -238,4 +238,9 @@
 (use-package magit
   :ensure t)
 (global-set-key (kbd "C-x g") #'magit-status)
-(global-set-key (kbd "C-c t") 'treemacs)
+(use-package treemacs
+  :bind
+  ("C-x t t" . treemacs)
+  :config
+  (setq treemacs-width 35)
+  (treemacs-follow-mode t))
