@@ -252,3 +252,8 @@
    (not (window-dedicated-p (selected-window))))
   (message "Window dedicated: %s"
            (window-dedicated-p (selected-window))))
+
+;; make the operation of jumping between multiple windows more easier
+(use-packge ace-window
+	    :ensure t
+	    :bind("M-o" . ace-window))
