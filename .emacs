@@ -263,3 +263,8 @@
 (global-set-key (kbd "C-M-<right>") 'enlarge-window-horizontally)
 (global-set-key (kbd "C-M-<down>")  'shrink-window)
 (global-set-key (kbd "C-M-<up>")    'enlarge-window)
+
+(use-package move-text
+  :ensure t
+  :config
+  (move-text-default-bindings))
