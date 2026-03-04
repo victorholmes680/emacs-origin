@@ -254,7 +254,7 @@
            (window-dedicated-p (selected-window))))
 
 ;; make the operation of jumping between multiple windows more easier
-(use-packge ace-window
+(use-package ace-window
 	    :ensure t
 	    :bind("M-o" . ace-window))
 
