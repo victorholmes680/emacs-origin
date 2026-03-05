@@ -144,9 +144,17 @@
 
 ;;(load-theme 'modus-vivendi t)
 ;;(load-theme 'gruber-darker t)
-(use-package gruber-darker-theme
-  :init
-  (load-theme 'gruber-darker t))
+
+;; (use-package gruber-darker-theme
+;;   :init
+;;   (load-theme 'gruber-darker t))
+
+(use-package doom-themes
+  :ensure t
+  :config
+  (load-theme 'doom-one t))
+
+
 
 (use-package expand-region
   :ensure t
