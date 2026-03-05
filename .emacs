@@ -143,7 +143,10 @@
   (define-key rust-mode-map (kbd "C-c C-f") #'rust-format-buffer))
 
 ;;(load-theme 'modus-vivendi t)
-(load-theme 'gruber-darker t)
+;;(load-theme 'gruber-darker t)
+(use-package gruber-darker-theme
+  :init
+  (load-theme 'gruber-darker t))
 
 (use-package expand-region
   :ensure t
