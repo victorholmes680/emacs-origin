@@ -244,7 +244,7 @@
   :bind
   (("M-<up>"  . move-text-up)
    ("M-<down>" . move-text-down)))
-(global-set-key (kbd "C-c m l") #'mc/edit-lines)
+;;(global-set-key (kbd "C-c m l") #'mc/edit-lines)
 
 
 (use-package magit
