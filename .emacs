@@ -127,6 +127,7 @@
   :ensure t
   :bind (("M-n" . mc/mark-next-like-this)
          ("M-p" . mc/mark-previous-like-this)
+         ("C-c m" . mc/mark-all-in-region)
          ("C-c C-a" . mc/mark-all-like-this)))
 (global-set-key (kbd "C-c |") 'align-regexp)
 (use-package iedit
