@@ -280,4 +280,15 @@
   :ensure t
   :config
   (move-text-default-bindings))
+
 (require 'org-tempo)
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((python . t)
+   (shell . t)
+   (emacs-lisp . t)
+   (C . t)
+   (js . t)))
+
+(setq org-babel-python-command "python3")
+(setq org-confirm-babel-evaluate nil)
