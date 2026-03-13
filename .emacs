@@ -280,3 +280,4 @@
   :ensure t
   :config
   (move-text-default-bindings))
+(require 'org-tempo)
