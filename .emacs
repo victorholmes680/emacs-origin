@@ -292,4 +292,10 @@
    (js . t)))
 
 (setq org-babel-python-command "python3")
+
+;; use whitespace and show whitespace
 (setq org-confirm-babel-evaluate nil)
+(setq-default indent-tabs-mode nil)  ;; 不使用 tab 字符
+(setq-default tab-width 4)           ;; tab 显示为 4 个空格(require 'whitespace)
+(setq whitespace-style '(face spaces tabs newline space-mark tab-mark newline-mark))
+(global-whitespace-mode 1)
