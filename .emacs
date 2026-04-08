@@ -304,3 +304,10 @@
 (setq-default tab-width 4)           ;; tab 显示为 4 个空格(require 'whitespace)
 (setq whitespace-style '(face spaces tabs newline space-mark tab-mark newline-mark))
 (global-whitespace-mode 1)
+
+
+(use-package json-mode
+  :ensure t
+  :hook (json-mode . hs-minor-mode)
+  :config
+  (setq-default js-indent-level 2))
