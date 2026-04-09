@@ -13,9 +13,13 @@
 
 (menu-bar-mode -1)
 (tool-bar-mode -1)
+<<<<<<< Updated upstream
 (when (fboundp 'scroll-bar-mode)
   (scroll-bar-mode -1))
 
+=======
+;; (scroll-bar-mode -1)
+>>>>>>> Stashed changes
 
 (setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode)
