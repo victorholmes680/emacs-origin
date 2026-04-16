@@ -32,6 +32,24 @@
   :init
   (setq markdown-command "multimarkdown"))
 
+;; Markdown preview in eww (inside emacs)
+(defun my-md-preview-eww ()
+  "Preview markdown in emacs eww browser."
+  (interactive)
+  (unless (buffer-file-name)
+    (error "Buffer is not visiting a file"))
+  (let ((md-file (buffer-file-name))
+        (html-file (make-temp-file "md-preview-" nil ".html")))
+    ;; Convert markdown to HTML
+    (shell-command (format "pandoc %s -o %s --standalone" md-file html-file))
+    ;; Open in eww
+    (eww-open-file html-file)
+    (message "Preview: %s" html-file)))
+
+;; Bind to markdown mode
+(with-eval-after-load 'markdown-mode
+  (define-key markdown-mode-map (kbd "C-c C-p") #'my-md-preview-eww))
+
 (add-to-list 'auto-mode-alist '("\\.[hc]\\(pp\\)?\\'" . simpc-mode))
 (add-to-list 'auto-mode-alist '("\\.js\\'"  . js-mode))
 (add-to-list 'auto-mode-alist '("\\.mjs\\'" . js-mode))
