@@ -326,3 +326,8 @@
   :hook (json-mode . hs-minor-mode)
   :config
   (setq-default js-indent-level 2))
+
+;; Create alias
+(defalias 'format-region 'indent-region)
+
+(global-set-key (kbd "C-c f") #'format-region)
