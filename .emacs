@@ -332,12 +332,3 @@
 
 (global-set-key (kbd "C-c f") #'format-region)
 
-;; preview markdown file by pdf
-(defun md-preview-by-pdf ()
-  (interactive)
-  (shell-command
-   (format "pandoc %s -o /tmp/out.pdf"
-           (shell-quote-argument buffer-file-name)))
-  (start-process "mupdf" nil "mupdf" "/tmp/out.pdf"))
-
-
