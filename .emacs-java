@@ -1,0 +1,394 @@
+;;; -*- lexical-binding: t -*-
+
+;; Package management
+(require 'package)
+(setq package-archives
+      '(("gnu" . "https://elpa.gnu.org/packages/")
+	("melpa" . "https://melpa.org/packages/")
+	("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+(package-initialize)
+(unless package-archive-contents
+  (package-refresh-contents))
+
+
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+
+(setq display-line-numbers-type 'relative)
+(global-display-line-numbers-mode)
+
+(add-to-list 'load-path "~/.emacs.local/")
+(require 'simpc-mode)
+
+(use-package rust-mode
+  :ensure t
+  :mode "\\.rs\\'")
+
+(use-package markdown-mode
+  :ensure t
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init
+  (setq markdown-command "multimarkdown"))
+
+;; Markdown preview in eww (inside emacs)
+(defun my-md-preview-eww ()
+  "Preview markdown in emacs eww browser."
+  (interactive)
+  (unless (buffer-file-name)
+    (error "Buffer is not visiting a file"))
+  (let ((md-file (buffer-file-name))
+        (html-file (make-temp-file "md-preview-" nil ".html")))
+    ;; Convert markdown to HTML
+    (shell-command (format "pandoc %s -o %s --standalone" md-file html-file))
+    ;; Open in eww
+    (eww-open-file html-file)
+    (message "Preview: %s" html-file)))
+
+;; Bind to markdown mode
+(with-eval-after-load 'markdown-mode
+  (define-key markdown-mode-map (kbd "C-c C-p") #'my-md-preview-eww))
+
+(add-to-list 'auto-mode-alist '("\\.[hc]\\(pp\\)?\\'" . simpc-mode))
+(add-to-list 'auto-mode-alist '("\\.js\\'"  . js-mode))
+(add-to-list 'auto-mode-alist '("\\.mjs\\'" . js-mode))
+(add-to-list 'auto-mode-alist '("\\.cjs\\'" . js-mode))
+
+;; Language Server Protocol
+(use-package eglot
+  :ensure t
+  :hook ((rust-mode c-mode c++-mode js-mode) . eglot-ensure)
+  :config
+  (setq eglot-autoshutdown t)
+  (setq eglot-sync-connect nil)
+  )
+
+
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               '(rust-mode . ("rust-analyzer")))
+  (add-to-list 'eglot-server-programs
+	       '(js-mode . ("typescript-language-server" "--stdio")))
+  (add-to-list 'eglot-server-programs '(c-mode . ("clangd")))
+  (add-to-list 'eglot-server-programs '(c++-mode . ("clangd")))
+;;  (add-to-list 'eglot-server-programs '(simpc-mode . ("clangd")))
+  )
+
+
+(setq-default eglot-workspace-configuration
+              '((:clangd . (:fallbackFlags ["-std=c++20"]))))
+
+;; Disable startup screen
+(setq inhibit-startup-screen t)
+
+;; Highlight current line
+(global-hl-line-mode t)
+
+;; Auto-pair parentheses, brackets, quotes
+(electric-pair-mode 1)
+
+;; Delete selected text when typing
+(delete-selection-mode 1)
+
+;; Keep files ending with newline
+(setq require-final-newline t)
+
+;; Enable syntax highting everywhere
+(global-font-lock-mode t)
+
+;; 备份和自动保存文件设置
+(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
+(setq create-lockfiles nil)  ; 禁用 .#file 符号链接锁文件
+
+;; function folding
+(add-hook 'prog-mode-hook #'hs-minor-mode)
+
+(require 'project)
+
+;; Keybindings
+;;(global-set-key (kbd "C-c p f") #'project-find-file)
+;;(global-set-key (kbd "C-c p s") #'project-shell)
+(global-set-key (kbd "C-c d") 'duplicate-line)
+(global-set-key (kbd "C-x c") 'compile)
+(with-eval-after-load 'magit
+  (global-set-key (kbd "C-x g") #'magit-status))
+
+(use-package company
+  :ensure t
+  :init (global-company-mode)
+  :config
+  (setq company-idle-delay 0.1
+        company-minimum-prefix-length 1))
+
+(use-package corfu
+  :ensure t
+  :init
+  (global-corfu-mode))
+
+(use-package magit
+  :bind (("C-x g" . magit-status)))
+
+(use-package flymake
+  :ensure nil  ; Flymake 是 Emacs 内置包，无需从 ELPA 安装
+  :bind ("C-c ! l" . flymake-show-buffer-diagnostics)
+  :config
+  ;; 如果你还有其他 Flymake 相关的配置，可以放在这里
+  )
+(setq tab-always-indent 'complete)
+(setq corfu-auto t)
+(setq corfu-auto-delay 0.2)
+(setq corfu-auto-prefix 1)
+(xterm-mouse-mode 1)
+(mouse-wheel-mode 1)
+
+(use-package multiple-cursors
+  :ensure t
+  :bind (("M-n" . mc/mark-next-like-this)
+         ("M-p" . mc/mark-previous-like-this)
+         ("C-c m" . mc/mark-all-in-region)
+         ("C-c e" . mc/edit-lines)
+         ("C-c a" . mc/mark-all-like-this)))
+(global-set-key (kbd "C-c |") 'align-regexp)
+(use-package iedit
+  :bind ("C-;" . iedit-mode))
+
+
+;; Restore classic C-j behavior in Emacs Lisp buffers
+(add-hook 'emacs-lisp-mode-hook
+          (lambda ()
+            (local-set-key (kbd "C-j") #'eval-print-last-sexp)))
+
+
+(with-eval-after-load 'rust-mode
+  (define-key rust-mode-map (kbd "C-c C-f") #'rust-format-buffer))
+
+;;(load-theme 'modus-vivendi t)
+;;(load-theme 'gruber-darker t)
+
+(use-package gruber-darker-theme
+  :init
+  (load-theme 'gruber-darker t))
+
+;; (use-package doom-themes
+;;   :ensure t
+;;   :config
+;;   (load-theme 'doom-one t))
+
+
+
+(use-package expand-region
+  :ensure t
+  :bind ("C-=" . er/expand-region))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(projectile orderless vertico treemacs-projectile treemacs expand-region rust-mode multiple-cursors magit gruber-darker-theme corfu)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+;; C-c c Capture
+;; C-c C-s schedule
+;; C-c a Agenda
+;; C-c C-e export
+;; C-c C-c make sure
+;; C-c ' edit the code block
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "DOING(i)" "BLOCKED(b)" "|" "DONE(d)" "CANCELLED(c)")))
+(setq org-agenda-files '("~/org"))
+(setq org-capture-templates
+      '(("t" "Todo" entry
+         (file "~/org/inbox.org")
+         "* TODO %?\n  %U")))
+
+
+(defun my-split-window-right-and-move ()
+  "Split window horizontally and move focus to new window."
+  (interactive)
+  (split-window-right)
+  (other-window 1))
+
+(defun my-split-window-below-and-move ()
+  "Split window vertically and move focus to new window."
+  (interactive)
+  (split-window-below)
+  (other-window 1))
+
+(global-set-key (kbd "C-x 3") 'my-split-window-right-and-move)
+(global-set-key (kbd "C-x 2") 'my-split-window-below-and-move)
+
+(setq compile-command "")
+
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
+(defun syscpy ()
+  (interactive)
+  (when (use-region-p)
+    (shell-command-on-region
+     (region-beginning)
+     (region-end)
+     "pbcopy")
+    (deactivate-mark)))
+
+(defun copy-current-line ()
+  (interactive)
+  (kill-new
+   (buffer-substring
+    (line-beginning-position)
+    (line-beginning-position 2)))
+  (message "Line copied"))
+(global-set-key (kbd "C-c l") #'copy-current-line)
+
+;; Avy navigation
+(use-package avy
+  :ensure t
+  :bind (("M-j" . avy-goto-char-timer)))
+(setq avy-all-windows t)     ;; 跨窗口
+(setq avy-background t)      ;; 不遮挡文本
+(setq avy-timeout-seconds 0.3) ;; 输入停顿判定（可调）
+
+;; Treemacs
+(use-package treemacs
+  :ensure t
+  :bind (("C-x t t" . treemacs)))
+(setq compilation-scroll-output t)
+(use-package move-text
+  :ensure t
+  :bind
+  (("M-<up>"  . move-text-up)
+   ("M-<down>" . move-text-down)))
+;;(global-set-key (kbd "C-c m l") #'mc/edit-lines)
+
+
+(use-package magit
+  :ensure t)
+(global-set-key (kbd "C-x g") #'magit-status)
+(use-package treemacs
+  :bind
+  ("C-x t t" . treemacs)
+  :config
+  (setq treemacs-width 35)
+  (treemacs-follow-mode t))
+
+(defun wl () ;; windows lock (toggle window)
+  (interactive)
+  (set-window-dedicated-p
+   (selected-window)
+   (not (window-dedicated-p (selected-window))))
+  (message "Window dedicated: %s"
+           (window-dedicated-p (selected-window))))
+
+;; make the operation of jumping between multiple windows more easier
+(use-package ace-window
+	    :ensure t
+	    :bind("M-o" . ace-window))
+
+
+(global-set-key (kbd "C-M-<left>")  'shrink-window-horizontally)
+(global-set-key (kbd "C-M-<right>") 'enlarge-window-horizontally)
+(global-set-key (kbd "C-M-<down>")  'shrink-window)
+(global-set-key (kbd "C-M-<up>")    'enlarge-window)
+
+(use-package move-text
+  :ensure t
+  :config
+  (move-text-default-bindings))
+
+(require 'org-tempo)
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((python . t)
+   (shell . t)
+   (emacs-lisp . t)
+   (C . t)
+   (js . t)))
+
+(setq org-babel-python-command "python3")
+
+;; use whitespace and show whitespace
+(setq org-confirm-babel-evaluate nil)
+(setq-default indent-tabs-mode nil)  ;; 不使用 tab 字符
+(setq-default tab-width 4)           ;; tab 显示为 4 个空格(require 'whitespace)
+(setq whitespace-style '(face spaces tabs newline space-mark tab-mark newline-mark))
+(global-whitespace-mode 1)
+
+
+(use-package json-mode
+  :ensure t
+  :hook (json-mode . hs-minor-mode)
+  :config
+  (setq-default js-indent-level 2))
+
+;; Create alias
+(defalias 'format-region 'indent-region)
+
+(global-set-key (kbd "C-c f") #'format-region)
+
+;; ============================================================
+;; Java IDE support (Spring Boot / Maven project)
+;; ============================================================
+
+;; Add java-mode to eglot hooks
+(add-hook 'java-mode-hook #'eglot-ensure)
+
+;; Configure JDT LS server for Java
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               '(java-mode . ("jdtls"
+                              "-configuration" "/root/.cache/jdtls/config"
+                              "-data" "/root/.cache/jdtls/workspace"))))
+
+;; Java indentation (4 spaces, no tabs)
+(add-hook 'java-mode-hook
+          (lambda ()
+            (setq c-basic-offset 4
+                  tab-width 4
+                  indent-tabs-mode nil)))
+
+;; Auto-organize imports on save
+(add-hook 'java-mode-hook
+          (lambda ()
+            (add-hook 'before-save-hook #'eglot-code-action-organize-imports nil t)))
+
+;; ============================================================
+;; Project file navigation (like Neovim Telescope)
+;; ============================================================
+
+;; Vertico: vertical fuzzy minibuffer completion
+(use-package vertico
+  :ensure t
+  :init (vertico-mode))
+
+;; Orderless: fuzzy matching style
+(use-package orderless
+  :ensure t
+  :init
+  (setq completion-styles '(orderless basic)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion)))))
+
+;; Projectile: project management (detect pom.xml as project root)
+(use-package projectile
+  :ensure t
+  :init (projectile-mode +1)
+  :config
+  (setq projectile-project-root-files-bottom-up
+        '("pom.xml" ".git" ".projectile"))
+  :bind-keymap
+  ("C-c p" . projectile-command-map))
+
+;; Keybindings (Neovim-like workflow)
+;; C-c p f  — find file by name        (like Telescope find_files)
+;; C-c p g  — grep in project           (like Telescope live_grep)
+;; C-c p b  — switch buffer in project  (like Telescope buffers)
+;; C-c p r  — recent files
+;; C-c p D  — open project root in dired
+
