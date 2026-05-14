@@ -432,14 +432,26 @@
 
 (defun my-jdtls-workspace-dir ()
   "Create a unique jdtls workspace per project."
+
   (let* ((project (project-current))
          (root (if project
                    (project-root project)
                  default-directory))
-         (name (file-name-nondirectory
-                (directory-file-name root))))
+
+         ;; Remove trailing slash
+         (root (directory-file-name root))
+
+         ;; Create hash from full path
+         (hash (substring
+                (md5 root)
+                0
+                8))
+
+         ;; Human readable project name
+         (name (file-name-nondirectory root)))
+
     (expand-file-name
-     name
+     (format "%s-%s" name hash)
      "~/.cache/jdtls/workspace/")))
 
 ;; ============================================================
