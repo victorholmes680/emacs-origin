@@ -108,8 +108,6 @@
 (require 'project)
 
 ;; Keybindings
-;;(global-set-key (kbd "C-c p f") #'project-find-file)
-;;(global-set-key (kbd "C-c p s") #'project-shell)
 (global-set-key (kbd "C-c d") 'duplicate-line)
 (global-set-key (kbd "C-x c") 'compile)
 (with-eval-after-load 'magit
@@ -183,14 +181,14 @@
   :bind ("C-=" . er/expand-region))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess up it up, so be careful.
+ ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(treemacs-projectile treemacs expand-region rust-mode multiple-cursors magit gruber-darker-theme corfu)))
+   '(projectile orderless vertico treemacs-projectile treemacs expand-region rust-mode multiple-cursors magit gruber-darker-theme corfu)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess up it up, so be careful.
+ ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
@@ -333,7 +331,174 @@
 (global-set-key (kbd "C-c f") #'format-region)
 
 
-(use-package undo-tree
+;; ============================================================
+;; Project / Completion / Java IDE Support
+;; ============================================================
+
+(require 'project)
+(require 'cl-lib)
+
+;; ------------------------------------------------------------
+;; Force ALL projects to use TOP .git as project root
+;; Fix Java multi-module Maven projects
+;; ------------------------------------------------------------
+
+(defun my-project-find-root (dir)
+  "Always use the top-most .git directory as project root."
+  (let ((root (locate-dominating-file dir ".git")))
+    (when root
+      (cons 'vc (expand-file-name root)))))
+
+;; Put our finder FIRST
+(setq project-find-functions
+      '(my-project-find-root project-try-vc))
+
+;; ============================================================
+;; Vertico
+;; ============================================================
+
+(use-package vertico
   :ensure t
   :init
-  (global-undo-tree-mode))
+  (vertico-mode))
+
+;; ============================================================
+;; Orderless
+;; ============================================================
+
+(use-package orderless
+  :ensure t
+  :init
+  (setq completion-styles '(orderless basic)
+        completion-category-defaults nil
+        completion-category-overrides
+        '((file (styles partial-completion)))))
+
+;; ============================================================
+;; Projectile
+;; IMPORTANT:
+;; ONLY use .git as project root
+;; NEVER use pom.xml
+;; ============================================================
+
+(use-package projectile
+  :ensure t
+  :init
+  (projectile-mode +1)
+
+  :config
+  ;; ONLY git root
+  (setq projectile-project-root-files
+        '(".git"))
+
+  ;; Faster indexing
+  (setq projectile-indexing-method 'alien)
+
+  ;; Cache project files
+  (setq projectile-enable-caching t)
+
+  :bind-keymap
+  ("C-c p" . projectile-command-map))
+;; ============================================================
+;; Eglot (LSP)
+;; ============================================================
+
+(use-package eglot
+  :ensure t
+  :hook ((java-mode
+          rust-mode
+          c-mode
+          c++-mode
+          js-mode) . eglot-ensure)
+
+  :config
+  (setq eglot-autoshutdown t)
+  (setq eglot-sync-connect nil))
+
+;; ============================================================
+;; JDTLS Workspace
+;; One workspace per project
+;; ============================================================
+
+(defun my-jdtls-workspace-dir ()
+  "Create a unique jdtls workspace per project."
+
+  (let* ((project (project-current))
+         (root (if project
+                   (project-root project)
+                 default-directory))
+
+         ;; Remove trailing slash
+         (root (directory-file-name root))
+
+         ;; Create hash from full path
+         (hash (substring
+                (md5 root)
+                0
+                8))
+
+         ;; Human readable project name
+         (name (file-name-nondirectory root)))
+
+    (expand-file-name
+     (format "%s-%s" name hash)
+     "~/.cache/jdtls/workspace/")))
+
+;; ============================================================
+;; LSP Server Config
+;; ============================================================
+
+(with-eval-after-load 'eglot
+
+  ;; Java
+  (add-to-list 'eglot-server-programs
+               `(java-mode . ("jdtls"
+                              "-configuration"
+                              "~/.cache/jdtls/config"
+
+                              "-data"
+                              ,(my-jdtls-workspace-dir))))
+
+  ;; Rust
+  (add-to-list 'eglot-server-programs
+               '(rust-mode . ("rust-analyzer")))
+
+  ;; JavaScript / TypeScript
+  (add-to-list 'eglot-server-programs
+               '(js-mode . ("typescript-language-server"
+                            "--stdio")))
+
+  ;; C
+  (add-to-list 'eglot-server-programs
+               '(c-mode . ("clangd")))
+
+  ;; C++
+  (add-to-list 'eglot-server-programs
+               '(c++-mode . ("clangd"))))
+
+;; ============================================================
+;; Clangd config
+;; ============================================================
+
+(setq-default eglot-workspace-configuration
+              '((:clangd
+                 . (:fallbackFlags ["-std=c++20"]))))
+
+;; ============================================================
+;; Java formatting
+;; ============================================================
+
+(add-hook 'java-mode-hook
+          (lambda ()
+            (setq c-basic-offset 4
+                  tab-width 4
+                  indent-tabs-mode nil)))
+
+;; Auto organize imports
+(add-hook 'java-mode-hook
+          (lambda ()
+            (add-hook 'before-save-hook
+                      #'eglot-code-action-organize-imports
+                      nil
+                      t)))
+(set-face-background 'default "unspecified-bg")
