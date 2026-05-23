@@ -1,5 +1,5 @@
 ;;; -*- lexical-binding: t -*-
-
+(setq load-prefer-newer t)
 ;; Package management
 (require 'package)
 (setq package-archives
